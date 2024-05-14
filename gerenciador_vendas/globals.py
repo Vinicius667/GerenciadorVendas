@@ -13,11 +13,11 @@ DICT_TABLES_NAMES_COLUMNS_NAMES_TYPES = {USER_TABLE_NAME: USER_TABLE_COLUMNS_NAM
                                          PRODUCT_TABLE_NAME: PRODUCT_TABLE_COLUMNS_NAMES_TYPES, 
                                          SALES_TABLE_NAME: SALES_TABLE_COLUMNS_NAMES_TYPES}
 
-
-for name, columns_names_types in DICT_TABLES_NAMES_COLUMNS_NAMES_TYPES.items():
-    print("Tabela:", name)
-    print("Colunas:")
-    for column_name, column_type in columns_names_types.items():
-        print(column_name, column_type)
-        print('---------------------------------')
-    print('----------------------------------------------------------------')
+if __name__ == '__main__':
+    for name, columns_names_types in DICT_TABLES_NAMES_COLUMNS_NAMES_TYPES.items():
+        print("Tabela:", name)
+        print("Colunas:")
+        for column_name, column_type in columns_names_types.items():
+            print(column_name, column_type)
+            print('---------------------------------')
+        print('----------------------------------------------------------------')

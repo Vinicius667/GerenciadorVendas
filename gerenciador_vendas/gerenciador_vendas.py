@@ -1,20 +1,40 @@
 import sqlite3
+from typing import Dict
 
-from gerenciador_vendas import structures  # ,error_codes
+from gerenciador_vendas import globals, structures  # ,error_codes
 
 
-def was_table_created(nome: str) -> bool:
+def was_table_created(nome: str, cursor) -> bool:
     """ Checa se a tabela com o nome passado foi criada no banco de dados.
 
     Args:
         name (str): Nome da tabela a ser checada.
     """
-    connection = sqlite3.connect('database.db')
-    cursor = connection.cursor()
     cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{nome}'")
     result = cursor.fetchone()
-    connection.close()
     return result is not None
+
+
+def create_tables(dict_tables_names_columns_names_types: Dict) -> bool:
+    """ Cria as tabelas no banco de dados.
+
+    Args:
+        dict_tables_names_columns_names_types (Dict): Dicionario com o nome das tabelas e suas colunas.
+    """
+    connection = sqlite3.connect(globals.DATABASE_NAME)
+    cursor = connection.cursor()
+    for table_name, columns_names_types in dict_tables_names_columns_names_types.items():
+        if not was_table_created(table_name, cursor):
+            col_names_types = ', '.join([f'{column_name} {column_type}' for column_name, column_type in columns_names_types.items()])
+            sql_query = f'CREATE TABLE {table_name} ({col_names_types})'
+            print(sql_query)
+            cursor.execute(sql_query)
+    connection.commit()
+    connection.close()
+    return True
+
+
+create_tables(globals.DICT_TABLES_NAMES_COLUMNS_NAMES_TYPES)
 
 
 def add_new_user(nome: str, cpf: str, telefone: str,
@@ -59,15 +79,3 @@ def delete_user(cpf: str) -> str:
     """
 
     return '000'
-
-
-if __name__ == '__main__':
-    database_name = 'database.db'
-    # Cria a tabela de usuarios
-    if not was_table_created('usuarios'):
-        print('Criando tabela de usuarios...')
-        connection = sqlite3.connect(database_name)
-        cursor = connection.cursor()
-        cursor.execute('CREATE TABLE usuarios (id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, email TEXT, senha TEXT)')
-        connection.commit()
-        connection.close()
